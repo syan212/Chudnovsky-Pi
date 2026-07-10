@@ -4,9 +4,61 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "rich>=15.0.0",
+]
 
 [dependency-groups]
 dev = [
     "ruff>=0.15.20",
 ]
+
+[tool.ruff]
+target-version = "py310"
+preview = true
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "F",      # pyflakes
+    "I",      # isort
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+    "BLE",    # flake8-blind-except (no bare except:)
+    "C4",     # flake8-comprehensions
+    "SIM",    # flake8-simplify
+    "N",      # pep8-naming
+    "Q",      # flake8-quotes
+    "RUF",    # Ruff-specific rules
+    "ASYNC",  # flake8-async
+    "S",      # flake8-bandit (security)
+    "PTH",    # flake8-use-pathlib
+    "ERA",    # eradicate (commented-out code)
+    "PL",     # pylint
+    "PERF",   # perflint (performance)
+    "ANN",    # flake8-annotations
+    "ARG",    # flake8-unused-arguments
+    "FBT",    # flake8-boolean-trap
+    "RET",    # flake8-return
+    "TC",     # flake8-type-checking
+]
+
+ignore = [
+    "E501", # Delegate to formatter
+]
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "single"
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-sort-within-sections = true
+
+[tool.ruff.lint.flake8-type-checking]
+strict = true
+
+# Formatter
+[tool.ruff.format]
+line-ending = "lf"
+quote-style = "single"
+indent-style = "space"

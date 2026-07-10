@@ -1,6 +1,9 @@
-from functools import lru_cache
 from decimal import Decimal, getcontext
+from functools import lru_cache
 from sys import exit
+
+from compression import zstd
+from rich import print as rprint
 
 factorials = [
     1,
@@ -34,6 +37,26 @@ factorials = [
     304888344611713860501504000000,
     8841761993739701954543616000000,
     265252859812191058636308480000000,
+    8222838654177922817725562880000000,
+    263130836933693530167218012160000000,
+    8683317618811886495518194401280000000,
+    295232799039604140847618609643520000000,
+    10333147966386144929666651337523200000000,
+    371993326789901217467999448150835200000000,
+    13763753091226345046315979581580902400000000,
+    523022617466601111760007224100074291200000000,
+    20397882081197443358640281739902897356800000000,
+    815915283247897734345611269596115894272000000000,
+    33452526613163807108170062053440751665152000000000,
+    1405006117752879898543142606244511569936384000000000,
+    60415263063373835637355132068513997507264512000000000,
+    2658271574788448768043625811014615890319638528000000000,
+    119622220865480194561963161495657715064383733760000000000,
+    5502622159812088949850305428800254892961651752960000000000,
+    258623241511168180642964355153611979969197632389120000000000,
+    12413915592536072670862289047373375038521486354677760000000000,
+    608281864034267560872252163321295376887552831379210240000000000,
+    30414093201713378043612608166064768844377641568960512000000000000,
 ]
 
 
@@ -41,10 +64,9 @@ factorials = [
 def factorial(n: int) -> int:
     if n == 0:
         return 1
-    elif n < 30:
+    if n < len(factorials):
         return factorials[n]
-    else:
-        return n * factorial(n - 1)
+    return n * factorial(n - 1)
 
 
 def chudnovsky(it: int) -> Decimal:
@@ -60,19 +82,35 @@ def chudnovsky(it: int) -> Decimal:
     return Decimal(1) / (sum * Decimal(10005).sqrt() / Decimal(4270934400))
 
 
-def main():
+def main() -> None:
+    # Load 1 million digits of pi
+    with zstd.open('pi.txt.zst', 'rt') as f:
+        correct_pi = f.read()
+
     try:
-        iterations = int(input("How many iterations of the Chudnovsky Algorithm? : "))
+        iterations = int(input('How many iterations of the Chudnovsky Algorithm? : '))
         prec = int(
-            input("What precision do you want to use? (in d.p., 1,000,000 max): ")
+            input('What precision do you want to use? (in d.p., 1,000,000 max): ')
         )
     except ValueError:
-        print("Input(s) need to be positive integers. Aborting program")
+        rprint('[red]Input(s) need to be positive integers. Aborting program.')
         exit()
     getcontext().prec = int(prec)
     pi = chudnovsky(iterations)
-    print(pi)
+    num_correct = 0
+
+    for i, char in enumerate(str(pi)[2:]):
+        if char != correct_pi[i + 2]:
+            break
+        num_correct += 1
+    rprint(
+        f'[yellow][b]{num_correct}[/b] digits of pi (after the decimal point) were calculated correctly[/yellow]'
+    )
+    print('Calculated result (green is correct digits, red is incorrect):')
+    rprint(
+        f'[green]{str(pi)[: num_correct + 2]}[/green][red]{str(pi)[num_correct + 2 :]}[/red]'
+    )
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
