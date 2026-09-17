@@ -73,7 +73,7 @@ def chudnovsky(it: int) -> Decimal:
     sum = Decimal(0)
     for i in range(it):
         numerator = factorial(6 * i) * (545140134 * i + 13591409)
-        denominator = factorial(3 * i) * factorial(i) ** 3 * 640320 ** (3 * i)
+        denominator: int = factorial(3 * i) * factorial(i) ** 3 * 640320 ** (3 * i)
         n = Decimal(numerator) / Decimal(denominator)
         if i % 2 == 1:
             sum -= n
